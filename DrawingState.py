@@ -1,8 +1,7 @@
 import pygame
+from enum import Enum
 
 from Algorithms import imperfect_maze_gen, two_random_even_coord
-from math import floor
-from enum import Enum
 from State import WindowState
 from Constants import *
 
@@ -51,9 +50,9 @@ class DrawingState(WindowState):
     def what_is_clicked(self, mouse_position):
         mouse_x, mouse_y = mouse_position
         if mouse_y < self.av.h - 50:
-            return floor(mouse_x / BLOCKSIZE), floor(mouse_y / BLOCKSIZE)
+            return mouse_x // BLOCKSIZE, mouse_y // BLOCKSIZE
         else:
-            button = floor(mouse_x / self.av.buttonSize) + 1
+            button = mouse_x // self.av.buttonSize + 1
             if button == 1:
                 self.av.drawingTool = Tool.WALL
             elif button == 2:
@@ -64,7 +63,7 @@ class DrawingState(WindowState):
                 self.av.drawingTool = Tool.ERASER
             elif button == 5:
                 if mouse_y > self.av.h - 25:
-                    percent = floor((mouse_x - (self.av.buttonSize * 4)) / (self.av.buttonSize / 5)) / 10
+                    percent = ((mouse_x - self.av.buttonSize * 4) // (self.av.buttonSize / 5)) / 10
                     if percent == 0.4:
                         self.av.hard_clear()
                     else:

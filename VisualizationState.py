@@ -1,7 +1,8 @@
-from Algorithms import breadth_first_search, depth_first_search, a_star_search, walls_to_edges, hsv_to_rgb
 import math
 import pygame
 from enum import Enum
+
+from Algorithms import breadth_first_search, depth_first_search, a_star_search, walls_to_edges, hsv_to_rgb
 from State import WindowState
 from Constants import *
 
@@ -72,8 +73,8 @@ class VisualizationState(WindowState):
         return -1, -1
 
     def enter(self):
+        drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
         if self.av.selectedAlgo == Algo.BREADTH_FIRST_SEARCH:
-            drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
             self.av.maxDepth, self.av.depths, self.av.completed_path = breadth_first_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore)
             self.av.rainbow_speed_multiplier = math.floor(300 / self.av.maxDepth)
             if self.av.rainbow_speed_multiplier < 0.0001:
@@ -81,7 +82,6 @@ class VisualizationState(WindowState):
             self.av.switch_bfs_state()
 
         if self.av.selectedAlgo == Algo.DEPTH_FIRST_SEARCH:
-            drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
             self.av.maxDepth, self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = depth_first_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore)
             self.av.rainbow_speed_multiplier = math.floor(300 / self.av.maxDepth)
             if self.av.rainbow_speed_multiplier < 0.0001:
@@ -89,7 +89,6 @@ class VisualizationState(WindowState):
             self.av.switch_dfs_state()
 
         if self.av.selectedAlgo == Algo.A_STAR_SEARCH:
-            drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
             self.av.maxDepth, self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore, True)
             self.av.rainbow_speed_multiplier = math.floor(300 / self.av.maxDepth)
             if self.av.rainbow_speed_multiplier < 0.0001:
@@ -97,7 +96,6 @@ class VisualizationState(WindowState):
             self.av.switch_astar_state()
 
         if self.av.selectedAlgo == Algo.A_STAR_SEARCH_FAST:
-            drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
             self.av.maxDepth, self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore, False)
             self.av.rainbow_speed_multiplier = math.floor(300 / self.av.maxDepth)
             self.av.switch_astar_state()

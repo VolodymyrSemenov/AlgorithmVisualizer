@@ -1,7 +1,8 @@
+import pygame
+
 from State import WindowState
 from Algorithms import hsv_to_rgb
 from Constants import *
-import pygame
 
 
 class DFSState(WindowState):
@@ -13,6 +14,7 @@ class DFSState(WindowState):
         for wall in self.av.walls:
             pygame.draw.rect(self.av.screen, BLACK, pygame.Rect(wall[0] * BLOCKSIZE, wall[1] * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
         pygame.draw.rect(self.av.screen, BLACK, pygame.Rect(0, self.av.h - 50, self.av.buttonSize * 6, 50))
+        pygame.draw.rect(self.av.screen, GREEN, pygame.Rect(self.av.start[0] * BLOCKSIZE, self.av.start[1] * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
         pygame.draw.rect(self.av.screen, RED, pygame.Rect(self.av.end[0] * BLOCKSIZE, self.av.end[1] * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
 
         for tile in self.av.ordered_visited_nodes:

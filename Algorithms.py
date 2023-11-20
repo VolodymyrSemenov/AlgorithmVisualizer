@@ -1,19 +1,18 @@
-from collections import deque
+from collections import deque, defaultdict
 import colorsys
 import math
+from random import shuffle
 import random
 import heapq
-from collections import defaultdict
-
 
 def walls_to_edges(walls, x, y):
     complete_graph = []
     for i in range(x):
         for j in range(y - 1):
-            complete_graph.append([(i, j), (i, j + 1)])
+            complete_graph.append([(i, j), (i, j + 1)]) # Edge containing Node and Node below
     for i in range(x - 1):
         for j in range(y):
-            complete_graph.append([(i, j), (i + 1, j)])
+            complete_graph.append([(i, j), (i + 1, j)]) # Edge containing Node and Node right
     edges = defaultdict(list)
     for tile1, tile2 in complete_graph:
         if tile1 not in walls and tile2 not in walls:
@@ -62,12 +61,9 @@ def perfect_maze_gen(x, y):
 
 
 def imperfect_maze_gen(x, y, percent):
-    walls = sorted(perfect_maze_gen(x, y))
-    wall_length = len(walls)
-    for i in range(math.floor(wall_length * percent)):
-        random_element = random.sample(walls, 1)[0]
-        walls.remove(random_element)
-    return walls
+    walls = list(perfect_maze_gen(x, y))
+    shuffle(walls)
+    return set(walls[math.floor(len(walls) * percent):])
 
 
 def walls_to_node_sets(walls, x, y):
@@ -101,8 +97,8 @@ def breadth_first_search(edges, start, end, full_explore):
                 max_depth = depth[node_exploring] + 1
 
     completed_path = []
-    current_node = discovered_node.get(end, "no_connection")
-    if current_node != "no_connection":
+    current_node = discovered_node.get(end)
+    if current_node:
         for i in range(depth[end] - 1):
             completed_path.append(current_node)
             current_node = discovered_node[current_node]
@@ -110,15 +106,14 @@ def breadth_first_search(edges, start, end, full_explore):
 
 
 def depth_first_search(edges, start, end, full_explore):
-    queue = deque()
-    queue.append(start)
+    stack = [start]
     visited_nodes = [start]
     depth = {}
     max_depth = 0
     depth[start] = 0
     discovered_node = {start: None}
-    while queue and (end not in visited_nodes or full_explore):
-        node_exploring = queue.pop()
+    while stack and (end not in visited_nodes or full_explore):
+        node_exploring = stack.pop()
         connected_nodes = edges[node_exploring]
         random.shuffle(connected_nodes)
         for node in connected_nodes:
@@ -128,11 +123,11 @@ def depth_first_search(edges, start, end, full_explore):
                     max_depth = depth[node_exploring] + 1
                 discovered_node[node] = node_exploring
                 visited_nodes.append(node)
-                queue.append(node)
+                stack.append(node)
 
     completed_path = []
-    current_node = discovered_node.get(end, "no_connection")
-    if current_node != "no_connection":
+    current_node = discovered_node.get(end)
+    if current_node:
         for i in range(depth[end] - 1):
             completed_path.append(current_node)
             current_node = discovered_node[current_node]
@@ -163,8 +158,8 @@ def a_star_search(edges, start, end, full_explore, optimal):
 
 
     completed_path = []
-    current_node = discovered_node.get(end, "no_connection")
-    if current_node != "no_connection":
+    current_node = discovered_node.get(end)
+    if current_node:
         for i in range(depth[end] - 1):
             completed_path.append(current_node)
             current_node = discovered_node[current_node]
@@ -180,30 +175,28 @@ def hsv_to_rgb(h, s, v, m):
 
 
 def two_random_even_coord(x, y):
-    x_coord_bound = math.floor(x/4)
-    vertical_coord = math.floor(y/4)
-    x1 = random.randint(1, x_coord_bound - 1) * 2
-    x2 = random.randint(x_coord_bound + 1, math.floor(x/2)) * 2
-    y1 = random.randint(1, vertical_coord - 1) * 2
-    y2 = random.randint(vertical_coord + 1, math.floor(y/2)) * 2
-    choice = random.randint(0, 3)
-    if choice == 0:
-        return (x1, y1), (x2, y2)
-    if choice == 1:
-        return (x2, y2), (x1, y1)
-    if choice == 2:
-        return (x1, y2), (x2, y1)
-    if choice == 3:
-        return (x2, y1), (x1, y2)
+    x_coord_bound = x // 4
+    vertical_coord = y // 4
+    x1 = random.randint(1, x_coord_bound - 1) * 2 # Left half
+    x2 = random.randint(x_coord_bound, x // 2) * 2 # Right Half
+    y1 = random.randint(1, vertical_coord - 1) * 2 # Upper Half
+    y2 = random.randint(vertical_coord, y // 2) * 2 # Lower Half
+    match random.randint(0, 3): # To get any arrangement
+        case 0:
+            return (x1, y1), (x2, y2)
+        case 1:
+            return (x2, y2), (x1, y1)
+        case 2:
+            return (x1, y2), (x2, y1)
+        case 3:
+            return (x2, y1), (x1, y2)
 
 
 class PriorityQueue:
     def __init__(self, weight_function, elements):
-        self.heap = []
-        self.weight_function = weight_function
-        for element in elements:
-            self.heap.append((weight_function(element), element))
+        self.heap = [(weight_function(x), x) for x in elements]
         heapq.heapify(self.heap)
+        self.weight_function = weight_function
 
     def add(self, element):
         heapq.heappush(self.heap, (self.weight_function(element), element))
