@@ -82,9 +82,7 @@ def breadth_first_search(edges, start, end, full_explore):
     queue = deque()
     queue.append(start)
     visited_nodes = [start]
-    depth = {}
-    max_depth = 0
-    depth[start] = 0
+    depth = {start: 0}
     discovered_node = {start: None}
     while queue and (end not in visited_nodes or full_explore):
         node_exploring = queue.popleft()
@@ -94,7 +92,6 @@ def breadth_first_search(edges, start, end, full_explore):
                 discovered_node[node] = node_exploring
                 visited_nodes.append(node)
                 queue.append(node)
-                max_depth = depth[node_exploring] + 1
 
     completed_path = []
     current_node = discovered_node.get(end)
@@ -102,15 +99,13 @@ def breadth_first_search(edges, start, end, full_explore):
         for i in range(depth[end] - 1):
             completed_path.append(current_node)
             current_node = discovered_node[current_node]
-    return max_depth, depth, completed_path
+    return depth, completed_path
 
 
 def depth_first_search(edges, start, end, full_explore):
     stack = [start]
     visited_nodes = [start]
-    depth = {}
-    max_depth = 0
-    depth[start] = 0
+    depth = {start: 0}
     discovered_node = {start: None}
     while stack and (end not in visited_nodes or full_explore):
         node_exploring = stack.pop()
@@ -119,8 +114,6 @@ def depth_first_search(edges, start, end, full_explore):
         for node in connected_nodes:
             if node not in visited_nodes and (end not in visited_nodes or full_explore):
                 depth[node] = depth[node_exploring] + 1
-                if depth[node_exploring] + 1 > max_depth:
-                    max_depth = depth[node_exploring] + 1
                 discovered_node[node] = node_exploring
                 visited_nodes.append(node)
                 stack.append(node)
@@ -131,7 +124,7 @@ def depth_first_search(edges, start, end, full_explore):
         for i in range(depth[end] - 1):
             completed_path.append(current_node)
             current_node = discovered_node[current_node]
-    return max_depth, depth, completed_path, visited_nodes
+    return depth, completed_path, visited_nodes
 
 
 def a_star_search(edges, start, end, full_explore, optimal):
@@ -142,7 +135,6 @@ def a_star_search(edges, start, end, full_explore, optimal):
     else:
         cost_function = lambda point: depth[point] + (abs((point[0] - end[0])) + abs(point[1] - end[1])) * 1.5
     queue = PriorityQueue(cost_function, [start])
-    max_depth = 0
     depth[start] = 0
     discovered_node = {start: None}
     while len(queue.heap) != 0 and (end not in visited_nodes or full_explore):
@@ -153,8 +145,6 @@ def a_star_search(edges, start, end, full_explore, optimal):
                 discovered_node[node] = node_exploring
                 visited_nodes.append(node)
                 queue.add(node)
-                if depth[node_exploring] + 1 > max_depth:
-                    max_depth = depth[node_exploring] + 1
 
 
     completed_path = []
@@ -163,7 +153,7 @@ def a_star_search(edges, start, end, full_explore, optimal):
         for i in range(depth[end] - 1):
             completed_path.append(current_node)
             current_node = discovered_node[current_node]
-    return max_depth, depth, completed_path, visited_nodes
+    return depth, completed_path, visited_nodes
 
 
 def hsv_to_rgb(h, s, v, m):

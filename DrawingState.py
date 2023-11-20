@@ -15,18 +15,12 @@ class Tool(Enum):
 
 class DrawingState(WindowState):
     def render_screen(self):
-        self.av.screen.fill(LIGHT_GRAY)
-        for x in range(self.av.x):
-            for y in range(self.av.y):
-                pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(x * BLOCKSIZE, y * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE), 1)
-        for wall in self.av.walls:
-            pygame.draw.rect(self.av.screen, BLACK, pygame.Rect(wall[0] * BLOCKSIZE, wall[1] * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
+        self.render_base()
         for i in range(6):
             pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(i * self.av.buttonSize, self.av.h - 50, self.av.buttonSize, 50), 2)
         for i in range(5):
             pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(self.av.buttonSize * 4 + i * self.av.buttonSize / 5, self.av.h - 25, self.av.buttonSize / 5, 25), 2)
-        pygame.draw.rect(self.av.screen, GREEN, pygame.Rect(self.av.start[0] * BLOCKSIZE, self.av.start[1] * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
-        pygame.draw.rect(self.av.screen, RED, pygame.Rect(self.av.end[0] * BLOCKSIZE, self.av.end[1] * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
+        self.render_start_stop()
         self.av.screen.blit(self.av.drawing_state_big_text, [50, self.av.h - 45])
         self.av.screen.blit(self.av.drawing_state_small_text1, [830, self.av.h - 45])
         self.av.screen.blit(self.av.drawing_state_small_text2, [785, self.av.h - 20])
@@ -50,7 +44,7 @@ class DrawingState(WindowState):
     def what_is_clicked(self, mouse_position):
         mouse_x, mouse_y = mouse_position
         if mouse_y < self.av.h - 50:
-            return mouse_x // BLOCKSIZE, mouse_y // BLOCKSIZE
+            return mouse_x // BLOCK_SIZE, mouse_y // BLOCK_SIZE
         else:
             button = mouse_x // self.av.buttonSize + 1
             if button == 1:

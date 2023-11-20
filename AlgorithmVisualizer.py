@@ -19,8 +19,8 @@ class AlgorithmVisualizer:
         # Screen Config
         self.x = x
         self.y = y
-        self.w = x * BLOCKSIZE
-        self.h = y * BLOCKSIZE + 50
+        self.w = x * BLOCK_SIZE
+        self.h = y * BLOCK_SIZE + 50
         self.buttonSize = self.w / 6
 
         self.clock = pygame.time.Clock()
