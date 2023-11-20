@@ -14,9 +14,6 @@ class Algo(Enum):
 
 
 class VisualizationState(WindowState):
-    def __init__(self, algorithm_visualizer):
-        self.av = algorithm_visualizer
-
     def render_screen(self):
         self.av.screen.fill(LIGHT_GRAY)
         for x in range(self.av.x):
@@ -81,7 +78,7 @@ class VisualizationState(WindowState):
             self.av.rainbow_speed_multiplier = math.floor(300 / self.av.maxDepth)
             if self.av.rainbow_speed_multiplier < 0.0001:
                 self.av.rainbow_speed_multiplier = 1
-            self.av.switch_animation_bfs_state()
+            self.av.switch_bfs_state()
 
         if self.av.selectedAlgo == Algo.DEPTH_FIRST_SEARCH:
             drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
@@ -89,7 +86,7 @@ class VisualizationState(WindowState):
             self.av.rainbow_speed_multiplier = math.floor(300 / self.av.maxDepth)
             if self.av.rainbow_speed_multiplier < 0.0001:
                 self.av.rainbow_speed_multiplier = 1
-            self.av.switch_animation_dfs_state()
+            self.av.switch_dfs_state()
 
         if self.av.selectedAlgo == Algo.A_STAR_SEARCH:
             drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
@@ -97,10 +94,10 @@ class VisualizationState(WindowState):
             self.av.rainbow_speed_multiplier = math.floor(300 / self.av.maxDepth)
             if self.av.rainbow_speed_multiplier < 0.0001:
                 self.av.rainbow_speed_multiplier = 1
-            self.av.switch_animation_astar_state()
+            self.av.switch_astar_state()
 
         if self.av.selectedAlgo == Algo.A_STAR_SEARCH_FAST:
             drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
             self.av.maxDepth, self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore, False)
             self.av.rainbow_speed_multiplier = math.floor(300 / self.av.maxDepth)
-            self.av.switch_animation_astar_state()
+            self.av.switch_astar_state()

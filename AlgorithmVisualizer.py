@@ -1,15 +1,16 @@
 import pygame
 from pygame.locals import *
+
 from DrawingState import DrawingState, Tool
 from VisualizationState import VisualizationState, Algo
-from AnimationBFSState import AnimationBFSState
-from AnimationDFSState import AnimationDFSState
-from AnimationASState import AnimationASState
+from BFSState import BFSState
+from DFSState import DFSState
+from AStarState import AStateState
 from Constants import *
 
 
 class AlgorithmVisualizer:
-    def __init__(self, x, y):
+    def __init__(self, x=49, y=31):
         pygame.init()
         pygame.font.init()
         self.big_font = pygame.font.Font("Resources/font.ttf", 35)
@@ -34,8 +35,8 @@ class AlgorithmVisualizer:
 
         # Tile and Coloring Config
         self.walls = set()
-        self.start = (12, 16)
-        self.end = (38, 16)
+        self.start = (self.x // 4, self.y // 2)
+        self.end = (self.x * 3 // 4, self.y // 2)
         self.depths = {}
         self.completed_path = []
         self.maxDepth = 0
@@ -59,8 +60,8 @@ class AlgorithmVisualizer:
 
     def hard_clear(self):
         self.walls = set()
-        self.start = (12, 16)
-        self.end = (38, 16)
+        self.start = (self.x // 4, self.y // 2)
+        self.end = (self.x * 3 // 4, self.y // 2)
         self.depths = {}
         self.completed_path = []
         self.maxDepth = 0
@@ -80,7 +81,6 @@ class AlgorithmVisualizer:
                         quit()
                 elif event.type == QUIT:
                     quit()
-
                 if self.mouseDown:
                     self.state.click()
             self.state.render_screen()
@@ -91,11 +91,11 @@ class AlgorithmVisualizer:
     def switch_visualization_state(self):
         self.state = VisualizationState(self)
 
-    def switch_animation_bfs_state(self):
-        self.state = AnimationBFSState(self)
+    def switch_bfs_state(self):
+        self.state = BFSState(self)
 
-    def switch_animation_dfs_state(self):
-        self.state = AnimationDFSState(self)
+    def switch_dfs_state(self):
+        self.state = DFSState(self)
 
-    def switch_animation_astar_state(self):
-        self.state = AnimationASState(self)
+    def switch_astar_state(self):
+        self.state = AStateState(self)

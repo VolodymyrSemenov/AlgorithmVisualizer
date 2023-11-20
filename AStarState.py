@@ -4,19 +4,7 @@ from Constants import *
 import pygame
 
 
-class AnimationASState(WindowState):
-    def __init__(self, algorithm_visualizer):
-        self.av = algorithm_visualizer
-
-    def what_is_clicked(self, position):
-        pass
-
-    def click(self):
-        pass
-
-    def enter(self):
-        pass
-
+class AStateState(WindowState):
     def render_screen(self):
         self.av.screen.fill(LIGHT_GRAY)
         for x in range(self.av.x):

@@ -3,25 +3,22 @@ import colorsys
 import math
 import random
 import heapq
+from collections import defaultdict
 
 
 def walls_to_edges(walls, x, y):
     complete_graph = []
     for i in range(x):
         for j in range(y - 1):
-            complete_graph.append([i, j, i, j + 1])
+            complete_graph.append([(i, j), (i, j + 1)])
     for i in range(x - 1):
         for j in range(y):
-            complete_graph.append([i, j, i + 1, j])
-    edges = {}
-    for edge in complete_graph:
-        if (edge[0], edge[1]) not in walls and (edge[2], edge[3]) not in walls:
-            accumulator = edges.get((edge[0], edge[1]), [])
-            accumulator.append((edge[2], edge[3]))
-            edges[(edge[0], edge[1])] = accumulator
-            accumulator2 = edges.get((edge[2], edge[3]), [])
-            accumulator2.append((edge[0], edge[1]))
-            edges[(edge[2], edge[3])] = accumulator2
+            complete_graph.append([(i, j), (i + 1, j)])
+    edges = defaultdict(list)
+    for tile1, tile2 in complete_graph:
+        if tile1 not in walls and tile2 not in walls:
+            edges[tile1].append(tile2)
+            edges[tile2].append(tile1)
     return edges
 
 
@@ -65,7 +62,7 @@ def perfect_maze_gen(x, y):
 
 
 def imperfect_maze_gen(x, y, percent):
-    walls = perfect_maze_gen(x, y,)
+    walls = sorted(perfect_maze_gen(x, y))
     wall_length = len(walls)
     for i in range(math.floor(wall_length * percent)):
         random_element = random.sample(walls, 1)[0]
@@ -81,7 +78,7 @@ def walls_to_node_sets(walls, x, y):
     filtered_nodes = list()
     for node in all_nodes:
         if node not in walls:
-            filtered_nodes.append({(node)})
+            filtered_nodes.append({node})
     return filtered_nodes
 
 
@@ -198,7 +195,6 @@ def two_random_even_coord(x, y):
         return (x1, y2), (x2, y1)
     if choice == 3:
         return (x2, y1), (x1, y2)
-
 
 
 class PriorityQueue:
