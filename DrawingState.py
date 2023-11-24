@@ -1,8 +1,10 @@
-import pygame
 from enum import Enum
+import random
 
-from Algorithms import imperfect_maze_gen, two_random_even_coord
-from State import WindowState
+import pygame
+
+from Algorithms import prims_maze_gen, kruskals_maze_gen, two_random_coord
+from State import State
 from Constants import *
 
 
@@ -13,7 +15,7 @@ class Tool(Enum):
     ERASER = 4
 
 
-class DrawingState(WindowState):
+class DrawingState(State):
     def render_screen(self):
         self.render_base()
         for i in range(6):
@@ -21,50 +23,66 @@ class DrawingState(WindowState):
         for i in range(5):
             pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(self.av.buttonSize * 4 + i * self.av.buttonSize / 5, self.av.h - 25, self.av.buttonSize / 5, 25), 2)
         self.render_start_stop()
-        self.av.screen.blit(self.av.drawing_state_big_text, [50, self.av.h - 45])
-        self.av.screen.blit(self.av.drawing_state_small_text1, [830, self.av.h - 45])
-        self.av.screen.blit(self.av.drawing_state_small_text2, [785, self.av.h - 20])
+        # self.av.screen.blit(self.av.drawing_state_big_text, [50, self.av.h - 45])
+        # self.av.screen.blit(self.av.drawing_state_small_text1, [830, self.av.h - 45])
+        # self.av.screen.blit(self.av.drawing_state_small_text2, [785, self.av.h - 20])
         pygame.display.flip()
 
     def click(self):
-        button_pressed = self.what_is_clicked(pygame.mouse.get_pos())
-        if button_pressed == (-1, -1):
+        block_pressed = self.block_pressed(pygame.mouse.get_pos())
+        if not block_pressed:
             pass
         elif self.av.drawingTool == Tool.WALL:
-            self.av.walls.add(button_pressed)
+            self.av.walls.add(block_pressed)
         elif self.av.drawingTool == Tool.START:
-            if button_pressed != self.av.end:
-                self.av.start = button_pressed
+            if block_pressed != self.av.end:
+                self.av.start = block_pressed
         elif self.av.drawingTool == Tool.END:
-            if button_pressed != self.av.start:
-                self.av.end = button_pressed
+            if block_pressed != self.av.start:
+                self.av.end = block_pressed
         elif self.av.drawingTool == Tool.ERASER:
-            self.av.walls.discard(button_pressed)
+            self.av.walls.discard(block_pressed)
 
-    def what_is_clicked(self, mouse_position):
+    def block_pressed(self, mouse_position):
         mouse_x, mouse_y = mouse_position
         if mouse_y < self.av.h - 50:
             return mouse_x // BLOCK_SIZE, mouse_y // BLOCK_SIZE
         else:
-            button = mouse_x // self.av.buttonSize + 1
-            if button == 1:
-                self.av.drawingTool = Tool.WALL
-            elif button == 2:
-                self.av.drawingTool = Tool.START
-            elif button == 3:
-                self.av.drawingTool = Tool.END
-            elif button == 4:
-                self.av.drawingTool = Tool.ERASER
-            elif button == 5:
-                if mouse_y > self.av.h - 25:
-                    percent = ((mouse_x - self.av.buttonSize * 4) // (self.av.buttonSize / 5)) / 10
-                    if percent == 0.4:
-                        self.av.hard_clear()
-                    else:
-                        self.generate_maze(percent)
-            elif button == 6:
-                self.enter()
-        return -1, -1
+            button_clicked =  mouse_x // self.av.buttonSize
+            match button_clicked:
+                case 0:
+                    self.av.drawingTool = Tool.WALL
+                case 1:
+                    self.av.drawingTool = Tool.START
+                case 2:
+                    self.av.drawingTool = Tool.END
+                case 3:
+                    self.av.drawingTool = Tool.ERASER
+                case 4:
+                    if mouse_y > self.av.h - 25:
+                        small_block = (mouse_x - self.av.buttonSize * 4) // (self.av.buttonSize / 5)
+                        match small_block:
+                            case 0:
+                                self.av.walls = kruskals_maze_gen(self.av.x, self.av.y)
+                                self.delete_walls(RMG_1_REMOVAL)
+                                self.randomize_start_stop()
+                            case 1:
+                                self.av.walls = kruskals_maze_gen(self.av.x, self.av.y)
+                                self.delete_walls(RMG_2_REMOVAL)
+                                self.randomize_start_stop()
+                            case 2:
+                                self.av.walls = prims_maze_gen(self.av.x, self.av.y, RMG_3_LENGTH)
+                                self.delete_walls(RMG_3_REMOVAL)
+                                self.randomize_start_stop()
+                            case 3:
+                                self.av.walls = prims_maze_gen(self.av.x, self.av.y, RMG_4_LENGTH)
+                                self.delete_walls(RMG_4_REMOVAL)
+                                self.randomize_start_stop()
+                            case 4:
+                                self.av.hard_clear()
+                case 5:
+                    self.enter()
+        return
 
     def enter(self):
         if self.av.start in self.av.walls:
@@ -73,6 +91,12 @@ class DrawingState(WindowState):
             self.av.walls.discard(self.av.end)
         self.av.switch_visualization_state()
 
-    def generate_maze(self, percent):
-        self.av.start, self.av.end = two_random_even_coord(self.av.x, self.av.y)
-        self.av.walls = imperfect_maze_gen(self.av.x, self.av.y, percent)
+    def randomize_start_stop(self):
+        self.av.start, self.av.end = two_random_coord(self.av.x, self.av.y)
+        while self.av.start in self.av.walls or self.av.end in self.av.walls:
+            self.av.start, self.av.end = two_random_coord(self.av.x, self.av.y)
+
+    def delete_walls(self, percent_to_remove):
+        walls = list(self.av.walls)
+        random.shuffle(walls)
+        self.av.walls = set(walls[len(walls) * percent_to_remove // 100:])

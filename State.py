@@ -1,8 +1,7 @@
 import pygame
-
 from Constants import *
 
-class WindowState:
+class State:
     def __init__(self, algorithm_visualizer):
         self.av = algorithm_visualizer
 
@@ -10,9 +9,6 @@ class WindowState:
         pass
 
     def click(self):
-        pass
-
-    def what_is_clicked(self, position):
         pass
 
     def enter(self):
