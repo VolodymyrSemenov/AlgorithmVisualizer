@@ -11,8 +11,8 @@ RED = (255, 0, 0)
 PURPLE = (68, 0, 102)
 GREEN = (0, 200, 100)
 
-# Sizing/Quantity of grid
-BLOCK_SIZE = 20 # Pixels per side of block
+# Sizing of grid and blocks in grid
+BLOCK_SIZE = 24 # Pixels per side of block
 X_BLOCKS = 49
 Y_BLOCKS = 31
 

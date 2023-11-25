@@ -40,13 +40,6 @@ class AlgorithmVisualizer:
         self.maxDepth = 0
         self.rainbow_speed_multiplier = 1
         self.ordered_visited_nodes = []
-
-        # self.drawing_state_big_text = self.big_font.render("WALLS         START            END          ERASER                               NEXT", True, BLACK)
-        # self.drawing_state_small_text1 = self.small_font.render("GENERATE MAZE", True, BLACK)
-        # self.drawing_state_small_text2 = self.small_font.render("100%  90%  80%   70%  CLR", True, BLACK)
-        # self.visualization_state_big_text = self.big_font.render("BFS              DFS                                MAP ALL         EDIT             NEXT", True, BLACK)
-        # self.visualization_state_small_text1 = self.small_font.render("A*", True, BLACK)
-        # self.visualization_state_small_text2 = self.small_font.render("Optimal             Fast", True, BLACK)
         self.state = DrawingState(self)
 
         self.run()
@@ -80,6 +73,7 @@ class AlgorithmVisualizer:
                 elif event.type == QUIT:
                     quit()
                 elif event.type == VIDEORESIZE:
+                    self.switch_drawing_state()
                     self.w, self.h = pygame.display.get_window_size()
                     self.x = self.w // BLOCK_SIZE
                     self.y = (self.h - 50) // BLOCK_SIZE
@@ -91,6 +85,7 @@ class AlgorithmVisualizer:
                 if self.mouseDown:
                   self.state.click()
             self.state.render_screen()
+            self.clock.tick(60)
 
     def switch_drawing_state(self):
         self.state = DrawingState(self)

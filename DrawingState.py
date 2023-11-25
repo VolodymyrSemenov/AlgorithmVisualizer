@@ -23,10 +23,16 @@ class DrawingState(State):
         for i in range(5):
             pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(self.av.buttonSize * 4 + i * self.av.buttonSize / 5, self.av.h - 25, self.av.buttonSize / 5, 25), 2)
         self.render_start_stop()
-        # self.av.screen.blit(self.av.drawing_state_big_text, [50, self.av.h - 45])
-        # self.av.screen.blit(self.av.drawing_state_small_text1, [830, self.av.h - 45])
-        # self.av.screen.blit(self.av.drawing_state_small_text2, [785, self.av.h - 20])
+        self.render_text()
         pygame.display.flip()
+
+    def render_text(self):
+        drawing_state_big_text = self.av.big_font.render("Walls               Start              End              Erase                                    Next", True, BLACK)
+        drawing_state_small_text1 = self.av.small_font.render("GENERATE MAZE", True, BLACK)
+        drawing_state_small_text2 = self.av.small_font.render("1        2        3       4     CLR", True, BLACK)
+        self.av.screen.blit(drawing_state_big_text, [50, self.av.h - 45])
+        self.av.screen.blit(drawing_state_small_text1, [830, self.av.h - 45])
+        self.av.screen.blit(drawing_state_small_text2, [800, self.av.h - 20])
 
     def click(self):
         block_pressed = self.block_pressed(pygame.mouse.get_pos())

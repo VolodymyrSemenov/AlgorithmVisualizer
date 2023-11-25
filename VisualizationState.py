@@ -25,10 +25,17 @@ class VisualizationState(State):
         for path in self.av.completed_path:
             pygame.draw.rect(self.av.screen, EXTRA_DARK_GRAY, pygame.Rect(path[0] * BLOCK_SIZE, path[1] * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
         self.render_start_stop()
-        # self.av.screen.blit(self.av.visualization_state_big_text, [75, self.av.h - 45])
-        # self.av.screen.blit(self.av.visualization_state_small_text1, [480, self.av.h - 45])
-        # self.av.screen.blit(self.av.visualization_state_small_text2, [420, self.av.h - 20])
+        self.render_text()
         pygame.display.flip()
+
+
+    def render_text(self):
+        visualization_state_big_text = self.av.big_font.render("BFS              DFS                                  Map All            Edit              Next", True, BLACK)
+        visualization_state_small_text1 = self.av.small_font.render("A*", True, BLACK)
+        visualization_state_small_text2 = self.av.small_font.render("Optimal         Unoptimal", True, BLACK)
+        self.av.screen.blit(visualization_state_big_text, [75, self.av.h - 45])
+        self.av.screen.blit(visualization_state_small_text1, [480, self.av.h - 45])
+        self.av.screen.blit(visualization_state_small_text2, [420, self.av.h - 20])
 
     def click(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -60,7 +67,6 @@ class VisualizationState(State):
                 self.av.switch_drawing_state()
             elif button == 6:
                 self.enter()
-
 
     def enter(self):
         drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
