@@ -27,9 +27,6 @@ class AlgorithmVisualizer:
 
         # Control Config
         self.mouseDown = False
-        self.drawingTool = Tool.WALL
-        self.selectedAlgo = Algo.BREADTH_FIRST_SEARCH
-        self.fullExplore = False
 
         # Tile and Coloring Config
         self.walls = set()

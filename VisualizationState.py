@@ -12,6 +12,12 @@ class Algo(Enum):
 
 
 class VisualizationState(State):
+    selectedAlgo = Algo.BREADTH_FIRST_SEARCH
+    fullExplore = False
+
+    def __init__(self, algorithm_visualizer):
+        super().__init__(algorithm_visualizer)
+
     def render_screen(self):
         self.render_base()
         for coordinate, depth in self.av.depths.items():
@@ -30,54 +36,49 @@ class VisualizationState(State):
 
 
     def render_text(self):
-        visualization_state_big_text = self.av.big_font.render("BFS              DFS                                  Map All            Edit              Next", True, BLACK)
-        visualization_state_small_text1 = self.av.small_font.render("A*", True, BLACK)
-        visualization_state_small_text2 = self.av.small_font.render("Optimal         Unoptimal", True, BLACK)
-        self.av.screen.blit(visualization_state_big_text, [75, self.av.h - 45])
-        self.av.screen.blit(visualization_state_small_text1, [480, self.av.h - 45])
-        self.av.screen.blit(visualization_state_small_text2, [420, self.av.h - 20])
+        visualization_state_big_text = self.av.big_font.render("        BFS              DFS                                  Map All            Edit              Next", True, BLACK)
+        visualization_state_small_text1 = self.av.small_font.render("                                                                                                                         A*", True, BLACK)
+        visualization_state_small_text2 = self.av.small_font.render("                                                                                                         Optimal         Unoptimal", True, BLACK)
+        self.av.screen.blit(self.scale_text(visualization_state_big_text), [0, self.av.h - 45])
+        self.av.screen.blit(self.scale_text(visualization_state_small_text1), [0, self.av.h - 45])
+        self.av.screen.blit(self.scale_text(visualization_state_small_text2), [0, self.av.h - 20])
 
     def click(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         if mouse_y < self.av.h - 50:
-            return mouse_x // BLOCK_SIZE, mouse_y // BLOCK_SIZE
-        else:
-            button = mouse_x // self.av.buttonSize + 1
-            if button == 1:
-                if self.av.selectedAlgo != Algo.BREADTH_FIRST_SEARCH:
-                    self.av.clear_tiles()
-                self.av.selectedAlgo = Algo.BREADTH_FIRST_SEARCH
-            elif button == 2:
-                if self.av.selectedAlgo != Algo.DEPTH_FIRST_SEARCH:
-                    self.av.clear_tiles()
-                self.av.selectedAlgo = Algo.DEPTH_FIRST_SEARCH
-            elif button == 3:
+            return
+        button = mouse_x // self.av.buttonSize + 1
+        old_selected_algo = self.selectedAlgo
+        match button:
+            case 1:
+                VisualizationState.selectedAlgo = Algo.BREADTH_FIRST_SEARCH
+            case 2:
+                VisualizationState.selectedAlgo = Algo.DEPTH_FIRST_SEARCH
+            case 3:
                 if (mouse_x - 2 * self.av.buttonSize) < self.av.buttonSize / 2:
-                    if self.av.selectedAlgo != Algo.A_STAR_SEARCH:
-                        self.av.clear_tiles()
-                        self.av.selectedAlgo = Algo.A_STAR_SEARCH
+                    VisualizationState.selectedAlgo = Algo.A_STAR_SEARCH
                 else:
-                    if self.av.selectedAlgo != Algo.A_STAR_SEARCH_FAST:
-                        self.av.clear_tiles()
-                        self.av.selectedAlgo = Algo.A_STAR_SEARCH_FAST
-            elif button == 4:
-                self.av.fullExplore = not self.av.fullExplore
-            elif button == 5:
+                    VisualizationState.selectedAlgo = Algo.A_STAR_SEARCH_FAST
+            case 4:
+                VisualizationState.fullExplore = not self.fullExplore
+            case 5:
                 self.av.clear_tiles()
                 self.av.switch_drawing_state()
-            elif button == 6:
+            case 6:
                 self.enter()
+        if self.selectedAlgo != old_selected_algo:
+            self.av.clear_tiles()
 
     def enter(self):
         drawing_edges = walls_to_edges(self.av.walls, self.av.x, self.av.y)
-        if self.av.selectedAlgo == Algo.BREADTH_FIRST_SEARCH:
-            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore, 0)
-        elif self.av.selectedAlgo == Algo.DEPTH_FIRST_SEARCH:
-            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = depth_first_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore)
-        elif self.av.selectedAlgo == Algo.A_STAR_SEARCH:
-            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore, 1)
-        elif self.av.selectedAlgo == Algo.A_STAR_SEARCH_FAST:
-            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.av.fullExplore, UNOPTIMAL_ASTAR_HEURISTIC_WEIGHT)
+        if self.selectedAlgo == Algo.BREADTH_FIRST_SEARCH:
+            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.fullExplore, 0)
+        elif self.selectedAlgo == Algo.DEPTH_FIRST_SEARCH:
+            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = depth_first_search(drawing_edges, self.av.start, self.av.end, self.fullExplore)
+        elif self.selectedAlgo == Algo.A_STAR_SEARCH:
+            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.fullExplore, 1)
+        elif self.selectedAlgo == Algo.A_STAR_SEARCH_FAST:
+            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.fullExplore, UNOPTIMAL_ASTAR_HEURISTIC_WEIGHT)
 
         self.av.maxDepth = max(x for x in self.av.depths.values())
         self.av.rainbow_speed_multiplier = 300 / self.av.maxDepth

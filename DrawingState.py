@@ -16,6 +16,10 @@ class Tool(Enum):
 
 
 class DrawingState(State):
+    def __init__(self, algorithm_visualizer):
+        super().__init__(algorithm_visualizer)
+        self.drawingTool = Tool.WALL
+
     def render_screen(self):
         self.render_base()
         for i in range(6):
@@ -27,67 +31,68 @@ class DrawingState(State):
         pygame.display.flip()
 
     def render_text(self):
-        drawing_state_big_text = self.av.big_font.render("Walls               Start              End              Erase                                    Next", True, BLACK)
-        drawing_state_small_text1 = self.av.small_font.render("GENERATE MAZE", True, BLACK)
-        drawing_state_small_text2 = self.av.small_font.render("1        2        3       4     CLR", True, BLACK)
-        self.av.screen.blit(drawing_state_big_text, [50, self.av.h - 45])
-        self.av.screen.blit(drawing_state_small_text1, [830, self.av.h - 45])
-        self.av.screen.blit(drawing_state_small_text2, [800, self.av.h - 20])
+        drawing_state_big_text = self.av.big_font.render("      Walls               Start              End              Erase                                    Next", True, BLACK)
+        drawing_state_small_text1 = self.av.small_font.render("                                                                                                                                                                                                              GENERATE MAZE", True, BLACK)
+        drawing_state_small_text2 = self.av.small_font.render("                                                                                                                                                                                                        1        2        3       4     CLR", True, BLACK)
+
+        self.av.screen.blit(self.scale_text(drawing_state_big_text), [0, self.av.h - 45])
+        self.av.screen.blit(self.scale_text(drawing_state_small_text1), [0, self.av.h - 45])
+        self.av.screen.blit(self.scale_text(drawing_state_small_text2), [0, self.av.h - 20])
 
     def click(self):
         block_pressed = self.block_pressed(pygame.mouse.get_pos())
-        if not block_pressed:
-            pass
-        elif self.av.drawingTool == Tool.WALL:
-            self.av.walls.add(block_pressed)
-        elif self.av.drawingTool == Tool.START:
-            if block_pressed != self.av.end:
-                self.av.start = block_pressed
-        elif self.av.drawingTool == Tool.END:
-            if block_pressed != self.av.start:
-                self.av.end = block_pressed
-        elif self.av.drawingTool == Tool.ERASER:
-            self.av.walls.discard(block_pressed)
+        match block_pressed:
+            case None:
+                pass
+            case Tool.WALL:
+                self.av.walls.add(block_pressed)
+            case Tool.START:
+                if block_pressed != self.av.end:
+                    self.av.start = block_pressed
+            case Tool.END:
+                if block_pressed != self.av.start:
+                    self.av.end = block_pressed
+            case Tool.ERASER:
+                self.av.walls.discard(block_pressed)
 
     def block_pressed(self, mouse_position):
         mouse_x, mouse_y = mouse_position
         if mouse_y < self.av.h - 50:
             return mouse_x // BLOCK_SIZE, mouse_y // BLOCK_SIZE
-        else:
-            button_clicked =  mouse_x // self.av.buttonSize
-            match button_clicked:
-                case 0:
-                    self.av.drawingTool = Tool.WALL
-                case 1:
-                    self.av.drawingTool = Tool.START
-                case 2:
-                    self.av.drawingTool = Tool.END
-                case 3:
-                    self.av.drawingTool = Tool.ERASER
-                case 4:
-                    if mouse_y > self.av.h - 25:
-                        small_block = (mouse_x - self.av.buttonSize * 4) // (self.av.buttonSize / 5)
-                        match small_block:
-                            case 0:
-                                self.av.walls = kruskals_maze_gen(self.av.x, self.av.y)
-                                self.delete_walls(RMG_1_REMOVAL)
-                                self.randomize_start_stop()
-                            case 1:
-                                self.av.walls = kruskals_maze_gen(self.av.x, self.av.y)
-                                self.delete_walls(RMG_2_REMOVAL)
-                                self.randomize_start_stop()
-                            case 2:
-                                self.av.walls = prims_maze_gen(self.av.x, self.av.y, RMG_3_LENGTH)
-                                self.delete_walls(RMG_3_REMOVAL)
-                                self.randomize_start_stop()
-                            case 3:
-                                self.av.walls = prims_maze_gen(self.av.x, self.av.y, RMG_4_LENGTH)
-                                self.delete_walls(RMG_4_REMOVAL)
-                                self.randomize_start_stop()
-                            case 4:
-                                self.av.hard_clear()
-                case 5:
-                    self.enter()
+        button_clicked =  mouse_x // self.av.buttonSize + 1
+        match button_clicked:
+            case 1:
+                self.drawingTool = Tool.WALL
+            case 2:
+                self.drawingTool = Tool.START
+            case 3:
+                self.drawingTool = Tool.END
+            case 4:
+                self.drawingTool = Tool.ERASER
+            case 5:
+                if mouse_y > self.av.h - 25:
+                    small_block = (mouse_x - self.av.buttonSize * 4) // (self.av.buttonSize / 5) + 1
+                    match small_block:
+                        case 1:
+                            self.av.walls = kruskals_maze_gen(self.av.x, self.av.y)
+                            self.delete_walls(RMG_1_REMOVAL)
+                            self.randomize_start_stop()
+                        case 2:
+                            self.av.walls = kruskals_maze_gen(self.av.x, self.av.y)
+                            self.delete_walls(RMG_2_REMOVAL)
+                            self.randomize_start_stop()
+                        case 3:
+                            self.av.walls = prims_maze_gen(self.av.x, self.av.y, RMG_3_LENGTH)
+                            self.delete_walls(RMG_3_REMOVAL)
+                            self.randomize_start_stop()
+                        case 4:
+                            self.av.walls = prims_maze_gen(self.av.x, self.av.y, RMG_4_LENGTH)
+                            self.delete_walls(RMG_4_REMOVAL)
+                            self.randomize_start_stop()
+                        case 5:
+                            self.av.hard_clear()
+            case 6:
+                self.enter()
         return
 
     def enter(self):
