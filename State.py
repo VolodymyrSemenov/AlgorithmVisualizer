@@ -1,5 +1,5 @@
 import pygame
-from Constants import *
+from Config import *
 
 class State:
     def __init__(self, algorithm_visualizer):

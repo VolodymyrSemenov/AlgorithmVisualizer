@@ -4,7 +4,7 @@ from pygame.locals import *
 from DrawingState import DrawingState, Tool
 from VisualizationState import VisualizationState, Algo
 from AnimationState import AnimationState
-from Constants import *
+from Config import *
 
 
 class AlgorithmVisualizer:

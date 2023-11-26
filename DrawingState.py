@@ -5,7 +5,7 @@ import pygame
 
 from Algorithms import prims_maze_gen, kruskals_maze_gen, two_random_coord
 from State import State
-from Constants import *
+from Config import *
 
 
 class Tool(Enum):

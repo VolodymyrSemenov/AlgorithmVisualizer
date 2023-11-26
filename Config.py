@@ -1,16 +1,3 @@
-# Colors
-BLACK = (0, 0, 0)
-EXTRA_DARK_GRAY = (100, 100, 100)
-DARK_GRAY = (200, 200, 200)
-LIGHT_GRAY = (220, 220, 220)
-WHITE = (255, 255, 255)
-ORANGE = (255, 128, 0)
-LIGHT_BLUE = (51, 255, 255)
-DARK_BLUE = (0, 0, 204)
-RED = (255, 0, 0)
-PURPLE = (68, 0, 102)
-GREEN = (0, 200, 100)
-
 # Sizing of grid and blocks in grid
 BLOCK_SIZE = 24 # Pixels per side of block
 X_BLOCKS = 49
@@ -30,4 +17,20 @@ RMG_4_LENGTH = 7 # 1+
 # The higher it is, the fewer nodes it will explore at the cost of a worse length path
 # At 0 it will behave like BFS
 # At 1 it will still find an optimal path
-UNOPTIMAL_ASTAR_HEURISTIC_WEIGHT = 2
+NON_OPTIMAL_ASTAR_HEURISTIC_WEIGHT = 2
+
+
+
+
+# Colors
+BLACK = (0, 0, 0)
+EXTRA_DARK_GRAY = (100, 100, 100)
+DARK_GRAY = (200, 200, 200)
+LIGHT_GRAY = (220, 220, 220)
+WHITE = (255, 255, 255)
+ORANGE = (255, 128, 0)
+LIGHT_BLUE = (51, 255, 255)
+DARK_BLUE = (0, 0, 204)
+RED = (255, 0, 0)
+PURPLE = (68, 0, 102)
+GREEN = (0, 200, 100)

@@ -89,7 +89,7 @@ class VisualizationState(State):
         elif self.selectedAlgo == Algo.A_STAR_SEARCH:
             self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.fullExplore, 1)
         elif self.selectedAlgo == Algo.A_STAR_SEARCH_FAST:
-            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.fullExplore, UNOPTIMAL_ASTAR_HEURISTIC_WEIGHT)
+            self.av.depths, self.av.completed_path, self.av.ordered_visited_nodes = a_star_search(drawing_edges, self.av.start, self.av.end, self.fullExplore, NON_OPTIMAL_ASTAR_HEURISTIC_WEIGHT)
 
         self.av.maxDepth = max(x for x in self.av.depths.values())
         self.av.rainbow_speed_multiplier = 300 / self.av.maxDepth
