@@ -26,6 +26,8 @@ class DrawingState(State):
             pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(i * self.av.buttonSize, self.av.h - 50, self.av.buttonSize, 50), 2)
         for i in range(5):
             pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(self.av.buttonSize * 4 + i * self.av.buttonSize / 5, self.av.h - 25, self.av.buttonSize / 5, 25), 2)
+        pygame.draw.rect(self.av.screen, BLACK, pygame.Rect((self.drawingTool.value-1) * self.av.buttonSize, self.av.h - 50, self.av.buttonSize, 50), 2)
+
         self.render_start_stop()
         self.render_text()
         pygame.display.flip()

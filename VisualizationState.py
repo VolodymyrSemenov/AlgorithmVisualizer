@@ -20,18 +20,29 @@ class VisualizationState(State):
 
     def render_screen(self):
         self.render_base()
+
         for coordinate, depth in self.av.depths.items():
             pygame.draw.rect(self.av.screen, hsv_to_rgb(depth, 1, 1, self.av.rainbow_speed_multiplier), pygame.Rect(coordinate[0] * BLOCK_SIZE, coordinate[1] * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
         for wall in self.av.walls:
             pygame.draw.rect(self.av.screen, BLACK, pygame.Rect(wall[0] * BLOCK_SIZE, wall[1] * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+
         for i in range(6):
             pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(i * self.av.buttonSize, self.av.h - 50, self.av.buttonSize, 50), 2)
         for i in range(2):
             pygame.draw.rect(self.av.screen, DARK_GRAY, pygame.Rect(self.av.buttonSize * 2 + i * self.av.buttonSize / 2, self.av.h - 25, self.av.buttonSize / 2, 25), 2)
+
+        if self.selectedAlgo.value > 2:
+            pygame.draw.rect(self.av.screen, BLACK, pygame.Rect(self.av.buttonSize * 2 + (self.selectedAlgo.value - 3) * self.av.buttonSize / 2, self.av.h - 25, self.av.buttonSize / 2, 25), 2)
+        else:
+            pygame.draw.rect(self.av.screen, BLACK, pygame.Rect((self.selectedAlgo.value - 1) * self.av.buttonSize, self.av.h - 50, self.av.buttonSize, 50), 2)
+        self.render_text()
+
+        if self.fullExplore:
+            pygame.draw.rect(self.av.screen, BLACK, pygame.Rect((3) * self.av.buttonSize, self.av.h - 50, self.av.buttonSize, 50), 2)
+
         for path in self.av.completed_path:
             pygame.draw.rect(self.av.screen, EXTRA_DARK_GRAY, pygame.Rect(path[0] * BLOCK_SIZE, path[1] * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
         self.render_start_stop()
-        self.render_text()
         pygame.display.flip()
 
 

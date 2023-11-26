@@ -34,7 +34,6 @@ class AlgorithmVisualizer:
         self.end = (self.x * 3 // 4, self.y // 2)
         self.depths = {}
         self.completed_path = []
-        self.maxDepth = 0
         self.rainbow_speed_multiplier = 1
         self.ordered_visited_nodes = []
         self.state = DrawingState(self)
@@ -44,7 +43,6 @@ class AlgorithmVisualizer:
     def clear_tiles(self):
         self.depths = {}
         self.completed_path = []
-        self.maxDepth = 0
 
     def hard_clear(self):
         self.walls = set()
@@ -52,7 +50,6 @@ class AlgorithmVisualizer:
         self.end = (self.x * 3 // 4, self.y // 2)
         self.depths = {}
         self.completed_path = []
-        self.maxDepth = 0
         self.rainbow_speed_multiplier = 1
 
     def run(self):

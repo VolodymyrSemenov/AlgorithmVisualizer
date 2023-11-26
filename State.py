@@ -14,10 +14,11 @@ class State:
     def enter(self):
         pass
 
-    def scale_text(self, rendered_text):
+    @staticmethod
+    def scale_text(rendered_text):
         default_size = [1176, 794]
         actual_size = pygame.display.get_window_size()
-        return pygame.transform.scale_by(rendered_text, (actual_size[0] / default_size[0], actual_size[0] / default_size[0]))
+        return pygame.transform.scale_by(rendered_text, actual_size[0] / default_size[0])
 
     def render_base(self):
         self.av.screen.fill(LIGHT_GRAY)
